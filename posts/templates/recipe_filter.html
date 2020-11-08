@@ -1,0 +1,26 @@
+            <ul class="tags">
+                <li class="tags__item">
+                    {% if page_filter_params.params.breakfast == "on" %}
+                        <a id="breakfast" class="tags__checkbox tags__checkbox_style_orange tags__checkbox_active" href="?{{ page_filter_params.urlparams }}breakfast="></a>
+                    {% else %}
+                        <a id="breakfast" class="tags__checkbox tags__checkbox_style_orange" href="?{{ page_filter_params.urlparams }}breakfast=on"></a>
+                    {% endif %}
+                    <span class="tags__label">Завтрак</span>
+                </li>
+                <li class="tags__item">
+                    {% if page_filter_params.params.lunch == "on" %}
+                        <a id="lunch" class="tags__checkbox tags__checkbox_style_green tags__checkbox_active" href="?{{ page_filter_params.urlparams }}lunch="></a>
+                    {% else %}
+                        <a id="lunch" class="tags__checkbox tags__checkbox_style_green" href="?{{ page_filter_params.urlparams }}lunch=on"></a>
+                    {% endif %}
+                    <span for="lunch" class="tags__label">Обед</span>
+                </li>
+                <li class="tags__item">
+                    {% if page_filter_params.params.dinner == "on" %}
+                        <a id="dinner" class="tags__checkbox tags__checkbox_style_purple tags__checkbox_active" href="?{{ page_filter_params.urlparams }}dinner="></a>
+                    {% else %}
+                        <a id="dinner" class="tags__checkbox tags__checkbox_style_purple" href="?{{ page_filter_params.urlparams }}dinner=on"></a>
+                    {% endif %}
+                    <label for="dinner" class="tags__label">Ужин</label>
+                </li>
+            </ul>

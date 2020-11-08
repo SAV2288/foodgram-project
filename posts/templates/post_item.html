@@ -1,0 +1,46 @@
+{% load static %}
+{% load thumbnail %}
+        <div class="card" data-id="{{ post.id }}">
+            {% thumbnail post.image "400x400" crop="center" as im %}
+                <a href="{% url 'post' username=post.author.username post_id=post.id %}" class="link" target="_blank"><img src="{{ im.url }}" class="card__image"></a>
+            {% endthumbnail %}
+            {% comment %} <a href="#" class="link" target="_blank"><img src={% static "images/testCardImg.png" %} alt="Какой-то текст" class="card__image"></a> {% endcomment %}
+            <div class="card__body">
+                <a class="card__title link" href="{% url 'post' username=post.author.username post_id=post.id %}" target="_blank">{{ post.title }}</a>
+                <ul class="card__items">
+                {% for tag in post.tag_recipe.all %}
+                    {% if tag.tag.title == "breakfast" %}
+                        <li class="card__item"><span class="badge badge_style_orange">Завтрак</span></li>
+                    {% elif tag.tag.title == "lunch" %}
+                        <li class="card__item"><span class="badge badge_style_green">Обед</span></li>
+                    {% elif tag.tag.title == "dinner" %}
+                        <li class="card__item"><span class="badge badge_style_purple">Ужин</span></li>
+                    {% else %}
+                        <li class="card__item"><span class="badge badge_style_purple">{{ tag.tag.title }}</span></li>
+                    {% endif %}
+                {% endfor %}
+                </ul>
+                <div class="card__items card__items_column">
+                    <p class="card__text"><span class="icon-time"></span> {{ post.time }} мин.</p>
+                    <p class="card__text"><span class="icon-user"></span> <a href="{% url 'author_recipes' username=post.author.username %}" style="color: black">{{ post.author.first_name }} {{ post.author.last_name }}</a></p>
+                </div>
+            </div>
+            <div class="card__footer">
+
+            {% if request.user.is_authenticated %}
+                {% if post.id in params.shop_list %}
+                    <button class="button button_style_light-blue-outline" name="purchases"><span class="icon-check button__icon"></span> Рецепт добавлен</button>
+                {% else %}
+                    <button class="button button_style_light-blue" name="purchases" data-out><span class="icon-plus button__icon"></span>Добавить в покупки</button>
+                {% endif %}
+            {% endif %}
+
+            {% if request.user.is_authenticated and request.user != post.author %}
+                {% if post.id in params.favorites_list %}
+                    <button class="button button_style_none" name="favorites"><span class="icon-favorite icon-favorite_active"></span></button>
+                {% else %}
+                    <button class="button button_style_none" name="favorites" data-out><span class="icon-favorite"></button>
+                {% endif %}
+            {% endif %}
+            </div>
+        </div>

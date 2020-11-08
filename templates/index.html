@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block title %}Рецепты{% endblock %}
+{% load static %}
+{% load user_filters %}
+{% block link %}
+    <link rel="stylesheet" href={% static "pages/index.css" %}>
+{% endblock %}
+{% block content %}
+        <div class="main__header">
+            <h1 class="main__title">Рецепты</h1>
+
+            {% include "recipe_filter.html"%}
+        </div>
+
+
+        
+        <div class="card-list">
+            {% for post in page %}
+                {% include "post_item.html" with post=post%}
+            {% endfor %}
+        </div>
+        <div class="pagination" aria-label="Search results pages">
+            {% if page.has_other_pages %}
+                {% include "paginator.html" with items=page paginator=paginator%}
+            {% endif %}
+        </div>
+
+
+{% endblock %}
+
+  {% block script %}
+    <script src={% static "js/components/MainCards.js" %}></script>
+    <script src={% static "js/components/Purchases.js" %}></script>
+    <script src={% static "js/components/Favorites.js" %}></script>
+    <script src={% static "js/config/config.js" %}></script>
+    <script src={% static "js/components/CardList.js" %}></script>
+    <script src={% static "js/components/Header.js" %}></script>
+    <script src={% static "js/api/Api.js" %}></script>
+    <script src={% static "indexAuth.js" %}></script>
+  {% endblock %}
