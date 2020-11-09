@@ -22,7 +22,7 @@ class Ingredient(models.Model):
 class Recipe(models.Model):
     title = models.CharField(max_length=50)
     text = models.TextField()
-    author = models.ForeignKey(User, on_delete=models.CASCADE, related_name="author_post")
+    author = models.ForeignKey(User, on_delete=models.CASCADE, related_name="recipes")
     pub_date = models.DateTimeField("date published", auto_now_add=True)
     time = models.IntegerField("Cooking time")
     image = models.ImageField(upload_to='posts/')

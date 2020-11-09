@@ -24,20 +24,21 @@ User = get_user_model()
 def profile_follow(request, username):
     """ Подписаться на автора """
 
-    author = User.objects.get(username=username)
-    follow = Follow.objects.filter(user=request.user, author=author).count()
+    author = get_object_or_404(User, username=username)
     
-    if request.user != author and follow == 0:
-        follow = Follow.objects.create(user=request.user, author=author)
-        return JsonResponse({"status": "true", "message": f"Вы подписались на автора {author.first_name} {author.last_name}"}, status=200, safe=False)
-    return JsonResponse({"status": "false", "message": f"Вы уже подписаны на автора {author.first_name} {author.last_name}"}, status=400, safe=False)
+    if request.user != author:
+        follow = Follow.objects.get_or_create(user=request.user, author=author)
+        if follow[1]:
+            return JsonResponse({"status": "true", "message": f"Вы подписались на автора {author.first_name} {author.last_name}"}, status=200, safe=False)
+        else:
+            return JsonResponse({"status": "false", "message": f"Вы уже подписаны на автора {author.first_name} {author.last_name}"}, status=400, safe=False)
 
 
 @login_required
 def profile_unfollow(request, username):
     """ Отписаться от автора """
 
-    author = User.objects.get(username=username)
+    author = get_object_or_404(User, username=username)
     follow = Follow.objects.filter(user=request.user, author=author).delete()
     return JsonResponse({"status": "true", "message": f"Автор {author.first_name} {author.last_name} удален из подписки"}, status=200, safe=False)
 
@@ -46,19 +47,26 @@ def profile_unfollow(request, username):
 def recipe_favorite(request, recipe_id):
     """ Добавить рецепт в избранное """
 
-    recipe = Recipe.objects.get(id=recipe_id)
-    favorite = Favorites.objects.filter(user=request.user, recipe=recipe).count()
-    if request.user != recipe.author and favorite == 0:
-        favorite = Favorites.objects.create(user=request.user, recipe=recipe)
-        return JsonResponse({"status": "true", "message": f"Рецепт '{recipe.title}' добавлен в избранное"}, status=200, safe=False)
-    return JsonResponse({"status": "false", "message": "Нельзя добавить в избранное свой рецепт"}, status=400, safe=False)
+    recipe = get_object_or_404(Recipe, id=recipe_id)
+    if request.user != recipe.author:
+        favorite = Favorites.objects.get_or_create(user=request.user, recipe=recipe)
+        if favorite[1]:
+            result = {"status": "true", "message": f"Рецепт '{recipe.title}' добавлен в избранное"}
+            status = 200
+        else:
+            result = {"status": "false", "message": f"Рецепт '{recipe.title}' уже в избранном"}
+            status = 400
+    else:
+        result = {"status": "false", "message": f"Нельзя добавить в избранное свой рецепт"}
+        status = 400
+    return JsonResponse(result, status=status, safe=False)
 
 
 @login_required
 def recipe_unfavorite(request, recipe_id):
     """ Удалить рецепт из избранного """
 
-    recipe = Recipe.objects.get( id=recipe_id )
+    recipe = get_object_or_404(Recipe, id=recipe_id )
     favorite = Favorites.objects.filter(user=request.user, recipe=recipe).delete()
     return JsonResponse({"status": "true", "message": f"Рецепт '{recipe.title}' удален из избранного"}, status=200, safe=False)
 
@@ -67,10 +75,8 @@ def recipe_unfavorite(request, recipe_id):
 def get_ingredients(request, name):
     """ Получить список ингредиентов. Фильтрует по названию """
 
-    ingreduents = Ingredient.objects.filter(name__startswith=name)
-    results = []
-    for ingredient in ingreduents:
-        results.append({"name": ingredient.name, "units":ingredient.units})
+    ingreduents = Ingredient.objects.filter(name__startswith=name).values("name", "units")
+    results = [{"name": ingredient["name"], "units":ingredient["units"]} for ingredient in ingreduents ]
     return JsonResponse({"results": results}, status=200, safe=False)
 
 
@@ -79,10 +85,8 @@ def recipe_to_shop_list(request, recipe_id):
     """ Добавить рецепт в список покупок """
 
     recipe = get_object_or_404(Recipe, id=recipe_id)
-    shop_list_verify = Shop_list.objects.filter(user = request.user, recipe=recipe).count()
-
-    if shop_list_verify == 0:
-        add_to_shop_list = Shop_list.objects.create(user = request.user, recipe=recipe)
+    add_to_shop_list = Shop_list.objects.get_or_create(user = request.user, recipe=recipe)
+    if add_to_shop_list[1]:
         return JsonResponse({"status": "true", "message": f"Рецепт '{recipe.title}' добавлен в список покупок"}, status=200, safe=False)
     return JsonResponse({"status": "false", "message": "Рецепт уже есть в списке покупок"}, status=400, safe=False)
 
@@ -91,7 +95,7 @@ def recipe_to_shop_list(request, recipe_id):
 def recipe_remove_in_shop_list(request, recipe_id):
     """ Удалить рецепт из списка покупок """
 
-    recipe = Recipe.objects.get(id=recipe_id)
+    recipe = get_object_or_404(Recipe, id=recipe_id)
     remove_recipe = Shop_list.objects.filter(user=request.user, recipe=recipe).delete()
     return JsonResponse({"status": "true", "message": f"Рецепт '{recipe.title}' удален из списока покупок"}, status=200, safe=False)
 

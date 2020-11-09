@@ -1,7 +1,7 @@
       <nav class="nav">
           <div class="nav__container container">
               <ul class="nav__items list">
-                {% if params.page_activ == "" %}
+                {% if page_activ == "" %}
                     <li class="nav__item nav__item_active"><a href="/" class="nav__link link">Рецепты</a></li>
                 {% else %}
                     <li class="nav__item"><a href="/" class="nav__link link">Рецепты</a></li>
@@ -9,28 +9,28 @@
 
             {% if user.is_authenticated %}
 
-                {% if params.page_activ == "follow" %}
+                {% if page_activ == "follow" %}
                     <li class="nav__item nav__item_active"><a href="{% url 'follow_index' %}" class="nav__link link">Мои подписки</a></li>
                 {% else %}
                     <li class="nav__item"><a href="{% url 'follow_index' %}" class="nav__link link">Мои подписки</a></li>
                 {% endif %}
 
-                {% if params.page_activ == "new_post" %}
+                {% if page_activ == "new_post" %}
                     <li class="nav__item nav__item_active"><a href="{% url 'new_post' %}" class="nav__link link">Создать рецепт</a></li>
                 {% else %}
                     <li class="nav__item"><a href="{% url 'new_post' %}" class="nav__link link">Создать рецепт</a></li>
                 {% endif %}
 
-                {% if params.page_activ == "favorites" %}
+                {% if page_activ == "favorites" %}
                     <li class="nav__item nav__item_active"><a href="{% url 'favorites_index' %}" class="nav__link link">Избранное</a></li>
                 {% else %}
                     <li class="nav__item"><a href="{% url 'favorites_index' %}" class="nav__link link">Избранное</a></li>
                 {% endif %}
                     
-                {% if params.page_activ == "shop_list" %}
-                    <li class="nav__item nav__item_active"><a href="{% url 'shop_list' %}" class="nav__link link">Список покупок</a> <span class="badge badge_style_blue nav__badge" id="counter">{{ params.shop_list_count }}</span></li>
+                {% if page_activ == "shop_list" %}
+                    <li class="nav__item nav__item_active"><a href="{% url 'shop_list' %}" class="nav__link link">Список покупок</a> <span class="badge badge_style_blue nav__badge" id="counter">{{ shop_list_count }}</span></li>
                 {% else %}
-                    <li class="nav__item"><a href="{% url 'shop_list' %}" class="nav__link link">Список покупок</a> <span class="badge badge_style_blue nav__badge" id="counter">{{ params.shop_list_count }}</span></li>
+                    <li class="nav__item"><a href="{% url 'shop_list' %}" class="nav__link link">Список покупок</a> <span class="badge badge_style_blue nav__badge" id="counter">{{ shop_list_count }}</span></li>
                 {% endif %}
                     
             {% endif %}
@@ -39,7 +39,7 @@
               <ul class="nav__items list">
             {% if user.is_authenticated %}
                 
-                {% if params.page_activ == "auth" %}
+                {% if page_activ == "auth" %}
                     <li class="nav__item nav__item_active"><a href="{% url 'password_change' %}" class="nav__link link">Изменить пароль</a></li>
                 {% else %}
                     <li class="nav__item"><a href="{% url 'password_change' %}" class="nav__link link">Изменить пароль</a></li>
@@ -49,7 +49,7 @@
 
             {% else %}
 
-                {% if params.page_activ == "auth" %}
+                {% if page_activ == "auth" %}
                     <li class="nav__item nav__item_active"><a href="{% url 'login' %}" class="nav__link link">Войти</a></li>
                 {% else %}
                     <li class="nav__item"><a href="{% url 'login' %}" class="nav__link link">Войти</a></li>

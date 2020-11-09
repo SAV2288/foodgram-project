@@ -28,7 +28,7 @@
             <div class="card__footer">
 
             {% if request.user.is_authenticated %}
-                {% if post.id in params.shop_list %}
+                {% if post.id in shop_list %}
                     <button class="button button_style_light-blue-outline" name="purchases"><span class="icon-check button__icon"></span> Рецепт добавлен</button>
                 {% else %}
                     <button class="button button_style_light-blue" name="purchases" data-out><span class="icon-plus button__icon"></span>Добавить в покупки</button>
@@ -36,7 +36,7 @@
             {% endif %}
 
             {% if request.user.is_authenticated and request.user != post.author %}
-                {% if post.id in params.favorites_list %}
+                {% if post.id in favorites_list %}
                     <button class="button button_style_none" name="favorites"><span class="icon-favorite icon-favorite_active"></span></button>
                 {% else %}
                     <button class="button button_style_none" name="favorites" data-out><span class="icon-favorite"></button>

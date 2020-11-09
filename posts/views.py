@@ -30,7 +30,6 @@ def index(request):
     tag_filter = TagFilter(request.GET, queryset=Recipe.objects.all().prefetch_related("tag_recipe").order_by("-pub_date"))
 
     page_filter_params = function.page_filter_params(request)
-    params = function.get_params(request)
 
     paginator = Paginator(tag_filter.qs, 9)
     page_number = request.GET.get("page")
@@ -39,7 +38,6 @@ def index(request):
     {
         "page": page,
         "paginator": paginator,
-        "params": params,
         "tag_filter": tag_filter,
         "page_filter_params": page_filter_params
     })
@@ -53,13 +51,10 @@ def new_post(request):
     recipe_comp_form = NewRecipeComp(request.POST or None)
     tag_form = TagForm(request.POST or None)
 
-    params = function.get_params(request)
-
     context = {
                 "recipe_form": recipe_form,
                 "recipe_comp_form": recipe_comp_form,
-                "tag_form": tag_form,
-                "params": params
+                "tag_form": tag_form
         }
 
     if request.method == "POST":
@@ -96,7 +91,6 @@ def author_recipes(request, username):
     tag_filter = TagFilter(request.GET, queryset=Recipe.objects.filter(author=author).prefetch_related("tag_recipe").order_by("-pub_date"))
 
     page_filter_params = function.page_filter_params(request)
-    params = function.get_params(request)
 
     paginator = Paginator(tag_filter.qs, 9)
     page_number = request.GET.get("page")
@@ -106,7 +100,6 @@ def author_recipes(request, username):
             "page": page,
             "paginator": paginator,
             "author": author,
-            "params": params,
             "tag_filter": tag_filter,
             "page_filter_params": page_filter_params
         })
@@ -119,12 +112,10 @@ def post_view(request, username, post_id):
     post = get_object_or_404(Recipe.objects.prefetch_related("tag_recipe"), pk=post_id, author=author)
     ingredients = Recipe_composition.objects.filter(recipe=post).select_related("ingredient")
 
-    params = function.get_params(request)
     return render(request, "post.html",
         {
             "post": post,
-            "ingredients": ingredients,
-            "params": params
+            "ingredients": ingredients
         })
 
 
@@ -146,8 +137,6 @@ def post_edit(request, username, post_id):
     recipe_comp_form = NewRecipeComp(request.POST or None)
     tag_form = TagForm(request.POST or None)
 
-    params = function.get_params(request)
-
     tag_active = [item.tag.title for item in recipe.tag_recipe.all()]
     ingredients = [
         {"name": item.ingredient.name, "units": item.ingredient.units, "amount": item.amount}
@@ -161,8 +150,7 @@ def post_edit(request, username, post_id):
                 "ingredients": ingredients,
                 "tag_active": tag_active,
                 "edit": True,
-                "id": recipe.id,
-                "params": params
+                "id": recipe.id
         }
 
     if request.method == "POST":
@@ -197,9 +185,7 @@ def follow_index(request):
     """ Страница подписок на авторов """
 
     following = Follow.objects.filter(user=request.user).values_list("author")
-    author_list = User.objects.filter(id__in=following).all().prefetch_related("author_post").annotate(recipe_count=Count("author_post"))
-
-    params = function.get_params(request)
+    author_list = User.objects.filter(id__in=following).all().prefetch_related("recipes").annotate(recipe_count=Count("recipes"))
 
     paginator = Paginator(author_list, 9)
     page_number = request.GET.get("page")
@@ -207,8 +193,7 @@ def follow_index(request):
     return render(request, "follow.html",
         {
             "page": page,
-            "paginator": paginator,
-            "params": params
+            "paginator": paginator
         })
 
 
@@ -220,7 +205,6 @@ def favorites_index(request):
     tag_filter = TagFilter(request.GET, queryset=Recipe.objects.filter(id__in=recipe_list).prefetch_related("tag_recipe").order_by("-pub_date"))
 
     page_filter_params = function.page_filter_params(request)
-    params = function.get_params(request)
 
     paginator = Paginator(tag_filter.qs, 9)
     page_number = request.GET.get("page")
@@ -229,7 +213,6 @@ def favorites_index(request):
         {
             "page": page,
             "paginator": paginator,
-            "params": params,
             "tag_filter": tag_filter,
             "page_filter_params": page_filter_params
         })
@@ -240,9 +223,8 @@ def shop_list_index(request):
     """ Страница с рецептами из списка покупок """
 
     recipe_list = Shop_list.objects.filter(user=request.user).select_related("recipe")
-    params = function.get_params(request)
+    # params = function.get_params(request)
     return render(request, "shop_list.html",
         {
-            "recipe_list": recipe_list,
-            "params": params
+            "recipe_list": recipe_list
         })

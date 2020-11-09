@@ -17,7 +17,7 @@
                     <div class="single-card__favorite">
 
                     {% if request.user.is_authenticated and request.user != post.author %}
-                        {% if post.id in params.favorites_list %}
+                        {% if post.id in favorites_list %}
                             <button class="button button_style_none" name="favorites"><span class="icon-favorite icon-favorite_big icon-favorite_active"></span></button>
                             <div class="single-card__favorite-tooltip tooltip">Убрать из избранного</div>
                         {% else %}
@@ -55,7 +55,7 @@
                 <ul class="single-card__items">
 
                 {% if request.user.is_authenticated %}
-                    {% if post.id in params.shop_list %}
+                    {% if post.id in shop_list %}
                         <li class="single-card__item"><button class="button button_style_blue-outline" name="purchases"><span class="icon-check"></span> Рецепт добавлен</button></li>
                     {% else %}
                         <li class="single-card__item"><button class="button button_style_blue" name="purchases" data-out><span class="icon-plus"></span>Добавить в покупки</button></li>
@@ -63,7 +63,7 @@
                 {% endif %}
 
                 {% if request.user.is_authenticated and request.user != post.author %}
-                    {% if post.author.id in params.subscriptions_list %}
+                    {% if post.author.id in subscriptions_list %}
                         <li class="single-card__item"><button class="button button_style_light-blue button_size_subscribe button_style_blue" name="subscribe">Отписаться от автора</button></li>
                     {% else %}
                         <li class="single-card__item"><button class="button button_style_light-blue button_size_subscribe" name="subscribe" data-out>Подписаться на автора</button></li>

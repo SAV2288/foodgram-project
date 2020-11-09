@@ -7,7 +7,7 @@
         <div class="card-user__body">
             <ul class="card-user__items">
 
-            {% for recipe in author.author_post.all|dictsortreversed:"pub_date"|slice:":3" %}
+            {% for recipe in author.recipes.all|dictsortreversed:"pub_date"|slice:":3" %}
                 <li class="card-user__item">
                     <div class="recipe">
                         {% thumbnail recipe.image "200x200" crop="center" as im %}
