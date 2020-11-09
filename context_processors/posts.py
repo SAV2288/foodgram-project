@@ -13,19 +13,30 @@ def get_params(request):
     - Список авторов, на которых подписан пользователь
     """
 
-    # Получить активную страницу (для подсвечивания соответствующего пункта меню)
+    # Получить активную страницу
+    # (для подсвечивания соответствующего пункта меню)
     page_activ = (request.META['PATH_INFO']).split("/")[1]
 
     if request.user.is_authenticated:
 
-        user_params = get_list_or_404(User.objects.prefetch_related("shop_list_recipe_user", "favorites_recipe_user", "follower"), username=request.user)
+        user_params = get_list_or_404(
+            User.objects.prefetch_related(
+                "shop_list_recipe_user",
+                "favorites_recipe_user",
+                "follower"
+            ),
+            username=request.user
+        )
 
         # Список рецептов в списке покупок
-        shop_list = [item.recipe_id for p in user_params for item in p.shop_list_recipe_user.all()]
+        shop_list = [item.recipe_id for p in user_params
+                     for item in p.shop_list_recipe_user.all()]
         # Список рецептов в избранном
-        favorites_list = [item.recipe_id for p in user_params for item in p.favorites_recipe_user.all()]
+        favorites_list = [item.recipe_id for p in user_params
+                          for item in p.favorites_recipe_user.all()]
         # Список авторов, на которых подписан пользователь
-        subscriptions_list = [item.author.id for p in user_params for item in p.follower.all()]
+        subscriptions_list = [item.author.id for p in user_params
+                              for item in p.follower.all()]
         # Колличество рецептов в списке покупок
         shop_list_count = len(shop_list)
 

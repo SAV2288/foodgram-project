@@ -3,10 +3,18 @@ from posts.models import Shop_list
 
 
 def get_ingredients(request):
-    """ Формирует список ингредиентов вида: 'ингредиент(ед. изменрения) - количество'. """
-    
-    recipe_list = Shop_list.objects.filter(user=request.user).values_list("recipe")
-    recipe_composition_list = Recipe.objects.filter(id__in=recipe_list).prefetch_related("recipe_composition", "recipe_composition__ingredient")
+    """Формирует список ингредиентов вида:
+    'ингредиент(ед. изменрения) - количество'."""
+
+    recipe_list = Shop_list.objects.filter(
+        user=request.user
+    ).values_list("recipe")
+    recipe_composition_list = Recipe.objects.filter(
+        id__in=recipe_list
+        ).prefetch_related(
+            "recipe_composition",
+            "recipe_composition__ingredient"
+        )
 
     # получить список ингредиентов и количество
     ingredients = []
@@ -22,7 +30,12 @@ def get_ingredients(request):
     while ingredients:
         ingreduent = ingredients.pop()
         ingredient_amount = amount.pop()
-        ingredients_set.append([ingreduent[0], ingreduent[1], int(ingredient_amount)])
+        ingredients_set.append(
+            [
+                ingreduent[0],
+                ingreduent[1],
+                int(ingredient_amount)
+            ])
         count_double_ingredient = ingredients.count(ingreduent)
         while count_double_ingredient:
             count_double_ingredient -= 1
@@ -31,6 +44,9 @@ def get_ingredients(request):
             ingredients.remove(ingreduent)
             amount.remove(amount[double_ingredient_index])
 
-    ingredients = [ f"{ ingredient[0] } ({ ingredient[1] }) - { ingredient[2] }\n" for ingredient in ingredients_set ]
+    ingredients = [
+        f"{ ingredient[0] } ({ ingredient[1] }) - { ingredient[2] }\n"
+        for ingredient in ingredients_set
+    ]
 
     return ingredients

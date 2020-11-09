@@ -1,14 +1,9 @@
-import re
-
-from django.shortcuts import get_list_or_404
 from django.contrib.auth import get_user_model
-from django.db.models import Count
 
 from posts.models import Tag
 from posts.models import Ingredient
 from posts.models import Recipe_composition
 from posts.models import Recipe_tag
-from posts.models import Shop_list
 
 User = get_user_model()
 
@@ -36,10 +31,15 @@ def get_ingredients_from_form(request):
     # обработать данные
     ingredients = []
     for i in range(len(nameingredients)):
-        ingredients.append({ "name": nameingredients[i], "units": unitsingredients[i], "amount": amount[i] })
+        ingredients.append(
+            {
+                "name": nameingredients[i],
+                "units": unitsingredients[i],
+                "amount": amount[i]
+            }
+        )
 
     return ingredients
-
 
 
 def get_ingredients(request):
@@ -50,22 +50,36 @@ def get_ingredients(request):
     name_ingredients_list = [ingredient["name"] for ingredient in ingredients]
 
     # получить список ингредиентов, имеющихся в базе
-    ingredients_db = [name[0] for name in Ingredient.objects.filter(name__in=name_ingredients_list).values_list("name")]
+    ingredients_db = [name[0] for name in
+                      Ingredient.objects.filter(
+                          name__in=name_ingredients_list
+                      ).values_list("name")]
 
     # дописать ноые ингридиенты
-    new_ingredient = [ingredient for ingredient in ingredients if ingredient["name"] not in ingredients_db]
+    new_ingredient = [ingredient for ingredient in ingredients
+                      if ingredient["name"] not in ingredients_db]
 
     if new_ingredient:
         for ingredient in new_ingredient:
-            Ingredient.objects.create(name=ingredient["name"], units=ingredient["units"])
+            Ingredient.objects.create(
+                name=ingredient["name"],
+                units=ingredient["units"]
+            )
 
     # получить объекты ингредиентов
-    ingredients_object = Ingredient.objects.filter(name__in=name_ingredients_list)
+    ingredients_object = Ingredient.objects.filter(
+                    name__in=name_ingredients_list
+                )
 
     # Составить список ингредиентов для рецепта
     recipe_ingredients_list = []
     for ingredient in ingredients:
-        recipe_ingredients_list.append({ "obj": ingredients_object.get(name=ingredient["name"]), "amount": ingredient["amount"] })
+        recipe_ingredients_list.append(
+            {
+                "obj": ingredients_object.get(name=ingredient["name"]),
+                "amount": ingredient["amount"]
+            }
+        )
 
     return recipe_ingredients_list
 

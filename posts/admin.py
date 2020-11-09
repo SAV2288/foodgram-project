@@ -13,15 +13,13 @@ from posts.models import Shop_list
 
 class RecipeAdmin(admin.ModelAdmin):
     readonly_fields = ("favorites_count",)
-    list_display = ("title", "author",) 
+    list_display = ("title", "author",)
     list_filter = ("title", "author", "tag_recipe__tag",)
     empty_value_display = "-пусто-"
-
 
     def get_queryset(self, request):
         qs = super(RecipeAdmin, self).get_queryset(request)
         return qs.annotate(favorites_count=Count("favorites_recipe"))
-
 
     def favorites_count(self, obj):
         return obj.favorites_count
@@ -31,10 +29,9 @@ class RecipeAdmin(admin.ModelAdmin):
 
 
 class IngredientAdmin(admin.ModelAdmin):
-    list_display = ("name", "units",) 
+    list_display = ("name", "units",)
     list_filter = ("name",)
     empty_value_display = "-пусто-"
-
 
 
 admin.site.register(Recipe, RecipeAdmin)
