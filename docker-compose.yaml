@@ -19,6 +19,7 @@ services:
     command: sh -c "python manage.py makemigrations --noinput && python manage.py migrate --noinput && gunicorn foodgram.wsgi:application --bind 0.0.0.0:8000"
     volumes:
       - ./static:/code/static/
+      - ./media:/code/media/
     ports:
       - "8000:8000"
     depends_on:
@@ -30,6 +31,7 @@ services:
     image: nginx:1.19.0
     volumes:
       - ./static:/code/static/
+      - ./media:/code/media/
       - ./nginx:/etc/nginx/conf.d
     ports:
       - "80:80"
