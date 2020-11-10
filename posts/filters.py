@@ -30,5 +30,7 @@ class TagFilter(django_filters.FilterSet):
         fields_on = [item for item, value in params.items() if value == "on"]
 
         if value:
-            queryset = queryset.filter(tag_recipe__tag__title__in=fields_on)
+            queryset = queryset.filter(
+                tag_recipe__tag__title__in=fields_on
+            ).distinct()
         return queryset
